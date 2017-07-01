@@ -1,4 +1,27 @@
 Samba-tools
+########################
+Remove password Complexity
+#samba-tool domain passwordsettings set --complexity=off 
+#samba-tool domain passwordsettings set --history-length=0 
+#samba-tool domain passwordsettings set --min-pwd-age=0 
+#samba-tool domain passwordsettings set --max-pwd-age=0
+systemctl restart samba
+on the windows machine you run gpupdate /force
+Hope it works just tested it
+[root@provisioning ~]# samba-tool domain passwordsettings show
+Password informations for domain 'DC=sunil,DC=cc'
+
+Password complexity: off
+Store plaintext passwords: off
+Password history length: 0
+Minimum password length: 7
+Minimum password age (days): 0
+Maximum password age (days): 0
+Account lockout duration (mins): 30
+Account lockout threshold (attempts): 0
+Reset account lockout after (mins): 30
+[root@provisioning ~]#
+########################
 Add zone file via command line
 [root@provisioning ~]# samba-tool dns zonelist localhost -U administrator
 Password for [SUNIL\administrator]:
