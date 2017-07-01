@@ -1,0 +1,82 @@
+Samba-tools
+Add zone file via command line
+[root@provisioning ~]# samba-tool dns zonelist localhost -U administrator
+Password for [SUNIL\administrator]:
+  2 zone(s) found
+
+  pszZoneName                 : sunil.cc
+  Flags                       : DNS_RPC_ZONE_DSINTEGRATED DNS_RPC_ZONE_UPDATE_SECURE
+  ZoneType                    : DNS_ZONE_TYPE_PRIMARY
+  Version                     : 50
+  dwDpFlags                   : DNS_DP_AUTOCREATED DNS_DP_DOMAIN_DEFAULT DNS_DP_ENLISTED
+  pszDpFqdn                   : DomainDnsZones.sunil.cc
+
+  pszZoneName                 : _msdcs.sunil.cc
+  Flags                       : DNS_RPC_ZONE_DSINTEGRATED DNS_RPC_ZONE_UPDATE_SECURE
+  ZoneType                    : DNS_ZONE_TYPE_PRIMARY
+  Version                     : 50
+  dwDpFlags                   : DNS_DP_AUTOCREATED DNS_DP_FOREST_DEFAULT DNS_DP_ENLISTED
+  pszDpFqdn                   : ForestDnsZones.sunil.cc
+[root@provisioning ~]# 
+[root@provisioning ~]# samba-tool dns zonecreate localhost 1.168.192.in-addr.arpa -U administrator
+Password for [SUNIL\administrator]:
+Zone 1.168.192.in-addr.arpa created successfully
+[root@provisioning ~]# samba-tool dns add localhost 1.168.192.in-addr.arpa 144 PTR sunil.cc -U administrator
+Password for [SUNIL\administrator]:
+Record added successfully
+[root@provisioning ~]# samba-tool dns add localhost 1.168.192.in-addr.arpa 165 PTR gitlab.sunil.cc -U administrator
+Password for [SUNIL\administrator]:
+Record added successfully
+[root@provisioning ~]# host 192.168.1.114
+Host 114.1.168.192.in-addr.arpa. not found: 3(NXDOMAIN)
+[root@provisioning ~]# samba-tool dns zonelist localhost
+Password for [SUNIL\root]:
+[root@provisioning ~]# samba-tool dns zonelist localhost -U administrator
+Password for [SUNIL\administrator]:
+  3 zone(s) found
+
+  pszZoneName                 : 1.168.192.in-addr.arpa
+  Flags                       : DNS_RPC_ZONE_DSINTEGRATED DNS_RPC_ZONE_UPDATE_SECURE
+  ZoneType                    : DNS_ZONE_TYPE_PRIMARY
+  Version                     : 50
+  dwDpFlags                   : DNS_DP_AUTOCREATED DNS_DP_DOMAIN_DEFAULT DNS_DP_ENLISTED
+  pszDpFqdn                   : DomainDnsZones.sunil.cc
+
+  pszZoneName                 : sunil.cc
+  Flags                       : DNS_RPC_ZONE_DSINTEGRATED DNS_RPC_ZONE_UPDATE_SECURE
+  ZoneType                    : DNS_ZONE_TYPE_PRIMARY
+  Version                     : 50
+  dwDpFlags                   : DNS_DP_AUTOCREATED DNS_DP_DOMAIN_DEFAULT DNS_DP_ENLISTED
+  pszDpFqdn                   : DomainDnsZones.sunil.cc
+
+  pszZoneName                 : _msdcs.sunil.cc
+  Flags                       : DNS_RPC_ZONE_DSINTEGRATED DNS_RPC_ZONE_UPDATE_SECURE
+  ZoneType                    : DNS_ZONE_TYPE_PRIMARY
+  Version                     : 50
+  dwDpFlags                   : DNS_DP_AUTOCREATED DNS_DP_FOREST_DEFAULT DNS_DP_ENLISTED
+  pszDpFqdn                   : ForestDnsZones.sunil.cc
+[root@provisioning ~]# systemctl restart samba
+[root@provisioning ~]# nslookup sunil.cc
+Server:         192.168.1.114
+Address:        192.168.1.114#53
+
+Name:   sunil.cc
+Address: 192.168.1.114
+Name:   sunil.cc
+Address: 192.168.80.10
+
+[root@provisioning ~]# nslookup 192.168.1.165
+Server:         192.168.1.114
+Address:        192.168.1.114#53
+
+165.1.168.192.in-addr.arpa      name = gitlab.sunil.cc.
+
+[root@provisioning ~]# nslookup 192.168.1.144
+Server:         192.168.1.114
+Address:        192.168.1.114#53
+
+144.1.168.192.in-addr.arpa      name = sunil.cc.
+
+[root@provisioning ~]# host 192.168.1.144
+144.1.168.192.in-addr.arpa domain name pointer sunil.cc.
+[root@provisioning ~]#
